@@ -43,10 +43,40 @@ public class AndroidUiTests
         Directory.CreateDirectory(screenshotDirectory);
     }
 
+    [SetUp]
+    public void SetUp()
+    {
+        RestartApp();
+        WaitForAccessibilityId("WelcomeBrowsePropertiesButton", 60);
+    }
+
     [OneTimeTearDown]
     public void OneTimeTearDown()
     {
-        driver?.Quit();
+        if (driver is null)
+        {
+            return;
+        }
+
+        driver.Quit();
+        driver.Dispose();
+        driver = null;
+    }
+
+    [Test]
+    public void BrowsePropertiesNavigatesToMainPage()
+    {
+        TapAccessibilityId("WelcomeBrowsePropertiesButton");
+        WaitForAccessibilityId("MainTopNavMenuButton", 60);
+        CaptureScreenshot("browse-properties-main");
+    }
+
+    [Test]
+    public void CreateAccountOpensUserTypeSelection()
+    {
+        TapAccessibilityId("WelcomeCreateAccountButton");
+        WaitForAccessibilityId("UserTypeSelectionPage", 120);
+        CaptureScreenshot("user-type-selection");
     }
 
     [Test]
@@ -120,7 +150,7 @@ public class AndroidUiTests
         }
 
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutSeconds));
-        return wait.Until(_ => driver.FindElement(AppiumBy.AccessibilityId(accessibilityId)));
+        return wait.Until(_ => driver.FindElement(MobileBy.AccessibilityId(accessibilityId)));
     }
 
     private bool TryWaitForAccessibilityId(string accessibilityId, int timeoutSeconds)
