@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'PolkadotAssetHub.NetApi'">
+    <Compile Include="$(MSBuildThisFileDirectory)GeneratedOverrides/PolkadotAssetHubDebugSettings.cs" />
+  </ItemGroup>
+</Project>
