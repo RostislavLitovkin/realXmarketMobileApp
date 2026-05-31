@@ -19,10 +19,10 @@ public class AndroidUiTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        var appPath = Environment.GetEnvironmentVariable("ANDROID_APP_PATH");
-        if (string.IsNullOrWhiteSpace(appPath))
+        var appPath = ResolveAppPath();
+        if (string.IsNullOrWhiteSpace(appPath) || !File.Exists(appPath))
         {
-            Assert.Fail("ANDROID_APP_PATH environment variable must be set to the built APK path.");
+            Assert.Fail("ANDROID_APP_PATH environment variable must be set to the built APK path. Build the APK and set ANDROID_APP_PATH, or build the app before running tests.");
         }
 
         var serverUrl = Environment.GetEnvironmentVariable("APPIUM_SERVER_URL") ?? "http://127.0.0.1:4723/wd/hub";
@@ -181,5 +181,61 @@ public class AndroidUiTests
         screenshot.SaveAsFile(path);
 
         TestContext.AddTestAttachment(path);
+    }
+
+    private static string? ResolveAppPath()
+    {
+        var appPath = Environment.GetEnvironmentVariable("ANDROID_APP_PATH");
+        if (!string.IsNullOrWhiteSpace(appPath) && File.Exists(appPath))
+        {
+            return appPath;
+        }
+
+        var discoveredPath = FindBuiltApkPath();
+        if (!string.IsNullOrWhiteSpace(discoveredPath))
+        {
+            Environment.SetEnvironmentVariable("ANDROID_APP_PATH", discoveredPath);
+        }
+
+        return discoveredPath ?? appPath;
+    }
+
+    private static string? FindBuiltApkPath()
+    {
+        var repoRoot = FindRepositoryRoot();
+        if (string.IsNullOrWhiteSpace(repoRoot))
+        {
+            return null;
+        }
+
+        var binRoot = Path.Combine(repoRoot, "XcavateMobileApp", "bin");
+        if (!Directory.Exists(binRoot))
+        {
+            return null;
+        }
+
+        var signedApk = Directory.EnumerateFiles(binRoot, "*Signed.apk", SearchOption.AllDirectories).FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(signedApk))
+        {
+            return signedApk;
+        }
+
+        return Directory.EnumerateFiles(binRoot, "*.apk", SearchOption.AllDirectories).FirstOrDefault();
+    }
+
+    private static string? FindRepositoryRoot()
+    {
+        var current = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "XcavateMobileApp.sln")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        return null;
     }
 }
