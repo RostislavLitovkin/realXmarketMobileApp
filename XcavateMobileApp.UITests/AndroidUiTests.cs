@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -19,10 +20,10 @@ public class AndroidUiTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        var appPath = ResolveAppPath();
+        var appPath = ResolveAppPath(out var errorMessage);
         if (string.IsNullOrWhiteSpace(appPath) || !File.Exists(appPath))
         {
-            Assert.Ignore("ANDROID_APP_PATH environment variable must be set to the built APK path. Build the APK and set ANDROID_APP_PATH, or build the app before running UI tests.");
+            Assert.Fail(errorMessage ?? "ANDROID_APP_PATH environment variable must be set to the built APK path. Build the APK and set ANDROID_APP_PATH before running UI tests.");
         }
 
         var serverUrl = Environment.GetEnvironmentVariable("APPIUM_SERVER_URL") ?? "http://127.0.0.1:4723/wd/hub";
@@ -183,8 +184,9 @@ public class AndroidUiTests
         TestContext.AddTestAttachment(path);
     }
 
-    private static string? ResolveAppPath()
+    private static string? ResolveAppPath(out string? errorMessage)
     {
+        errorMessage = null;
         var appPath = Environment.GetEnvironmentVariable("ANDROID_APP_PATH");
         if (!string.IsNullOrWhiteSpace(appPath) && File.Exists(appPath))
         {
@@ -195,9 +197,81 @@ public class AndroidUiTests
         if (!string.IsNullOrWhiteSpace(discoveredPath))
         {
             Environment.SetEnvironmentVariable("ANDROID_APP_PATH", discoveredPath);
+            return discoveredPath;
         }
 
-        return discoveredPath ?? appPath;
+        var builtApkPath = BuildAndroidApk(out var buildError);
+        if (!string.IsNullOrWhiteSpace(builtApkPath))
+        {
+            Environment.SetEnvironmentVariable("ANDROID_APP_PATH", builtApkPath);
+            return builtApkPath;
+        }
+
+        errorMessage = buildError ?? "ANDROID_APP_PATH environment variable must be set to the built APK path. Build the APK and set ANDROID_APP_PATH before running UI tests.";
+        return null;
+    }
+
+    private static string? BuildAndroidApk(out string? errorMessage)
+    {
+        errorMessage = null;
+        var repoRoot = FindRepositoryRoot();
+        if (string.IsNullOrWhiteSpace(repoRoot))
+        {
+            errorMessage = "Repository root could not be located to build the Android APK.";
+            return null;
+        }
+
+        var projectPath = Path.Combine(repoRoot, "XcavateMobileApp", "XcavateMobileApp.csproj");
+        if (!File.Exists(projectPath))
+        {
+            errorMessage = $"Android project file not found at {projectPath}.";
+            return null;
+        }
+
+        var startInfo = new ProcessStartInfo("dotnet")
+        {
+            WorkingDirectory = repoRoot,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+
+        startInfo.ArgumentList.Add("build");
+        startInfo.ArgumentList.Add(projectPath);
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add("Debug");
+        startInfo.ArgumentList.Add("-f");
+        startInfo.ArgumentList.Add("net10.0-android");
+        startInfo.ArgumentList.Add("-p:AndroidPackageFormat=apk");
+
+        using var process = Process.Start(startInfo);
+        if (process is null)
+        {
+            errorMessage = "Failed to start the Android APK build.";
+            return null;
+        }
+
+        var outputTask = process.StandardOutput.ReadToEndAsync();
+        var errorTask = process.StandardError.ReadToEndAsync();
+        process.WaitForExit();
+
+        var output = outputTask.GetAwaiter().GetResult();
+        var errorOutput = errorTask.GetAwaiter().GetResult();
+
+        if (process.ExitCode != 0)
+        {
+            errorMessage = $"dotnet build failed (exit code {process.ExitCode}).{Environment.NewLine}{output}{Environment.NewLine}{errorOutput}".Trim();
+            return null;
+        }
+
+        var builtApkPath = FindBuiltApkPath();
+        if (string.IsNullOrWhiteSpace(builtApkPath))
+        {
+            errorMessage = "Android APK was not produced after building.";
+            return null;
+        }
+
+        return builtApkPath;
     }
 
     private static string? FindBuiltApkPath()
