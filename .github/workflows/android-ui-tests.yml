@@ -6,6 +6,9 @@ on:
       - main
       - copilot/create-csproj-ui-tests
 
+permissions:
+  contents: read
+
 jobs:
   android-ui-tests:
     runs-on: ubuntu-latest
