@@ -23,6 +23,7 @@
              xmlns:xcavate="clr-namespace:PlutoFramework.Components.Xcavate;assembly=PlutoFramework"
              xmlns:components="clr-namespace:XcavateMobileApp.Components"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#0a0a0a}"
+             AutomationId="MainPage"
              Shell.PresentationMode="ModalNotAnimated"
              xmlns:card="clr-namespace:PlutoFramework.Components.Card;assembly=PlutoFramework"
              HideSoftInputOnTapped="True">

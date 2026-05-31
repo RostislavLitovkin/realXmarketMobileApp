@@ -1,0 +1,76 @@
+name: Android UI tests
+
+on:
+  push:
+    branches:
+      - main
+      - copilot/create-csproj-ui-tests
+
+jobs:
+  android-ui-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          include-prerelease: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+
+      - name: Build Android APK
+        run: dotnet build XcavateMobileApp/XcavateMobileApp.csproj -c Debug -f net10.0-android -p:AndroidPackageFormat=apk
+
+      - name: Install Appium
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      - name: Run UI tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          script: |
+            set -euo pipefail
+            APK_PATH=$(find XcavateMobileApp/bin/Debug/net10.0-android -name '*Signed.apk' -o -name '*.apk' | head -n 1)
+            if [ -z "$APK_PATH" ]; then
+              echo "APK not found."
+              exit 1
+            fi
+            appium --base-path /wd/hub --log-no-colors &
+            sleep 10
+            ANDROID_APP_PATH="$APK_PATH" \
+            APPIUM_SERVER_URL="http://127.0.0.1:4723/wd/hub" \
+            dotnet test XcavateMobileApp.UITests/XcavateMobileApp.UITests.csproj -c Debug --logger "trx;LogFileName=ui-tests.trx"
+
+      - name: Upload UI test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-artifacts
+          path: |
+            **/TestResults/**
+            **/screenshots/**
+            **/*.trx

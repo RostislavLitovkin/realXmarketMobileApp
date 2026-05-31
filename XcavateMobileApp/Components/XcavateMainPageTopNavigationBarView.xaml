@@ -4,7 +4,8 @@
              AbsoluteLayout.LayoutBounds="0.5, 0, 1, 65"
              AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional"
              xmlns:xcavate="clr-namespace:PlutoFramework.Components.Xcavate;assembly=PlutoFramework"
-             x:Class="XcavateMobileApp.Components.XcavateMainPageTopNavigationBarView">
+             x:Class="XcavateMobileApp.Components.XcavateMainPageTopNavigationBarView"
+             AutomationId="MainPageTopNavigationBar">
     <xcavate:PageBottomBarView
         Padding="10"
         ColumnSpacing="10">
@@ -30,6 +31,7 @@
                     BackgroundColor="#1A4E4E4E"
                     StrokeThickness="0"
                     Padding="5"
+                    AutomationId="MainTopNavMessagingButton"
     >
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="17.5" />
@@ -50,6 +52,7 @@
                 BackgroundColor="#1A4E4E4E"
                 StrokeThickness="0"
                 Padding="5"
+                AutomationId="MainTopNavQrButton"
 >
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="17.5" />
@@ -73,6 +76,7 @@
             BackgroundColor="#1A4E4E4E"
             StrokeThickness="0"
             Padding="5"
+            AutomationId="MainTopNavMenuButton"
     >
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="17.5" />

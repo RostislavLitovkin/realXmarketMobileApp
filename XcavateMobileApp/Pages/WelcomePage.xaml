@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="XcavateMobileApp.Pages.WelcomePage"
              Title="WelcomePage"
+             AutomationId="WelcomePage"
              xmlns:buttons="clr-namespace:PlutoFramework.Components.Buttons;assembly=PlutoFramework"
              xmlns:xcavate="clr-namespace:PlutoFramework.Components.Xcavate;assembly=PlutoFramework"
             xmlns:navigationbar="clr-namespace:PlutoFramework.Components.NavigationBar;assembly=PlutoFramework"
@@ -30,6 +31,7 @@
             <xcavate:RiskWarningView Margin="20,10,20,10"/>
             
             <CarouselView x:Name="carouselView"
+                      AutomationId="WelcomeCarousel"
                       ItemsSource="{Binding Splashes}"
                       IndicatorView="indicatorView"
                       Grid.Row="2"
@@ -99,12 +101,15 @@
                  Spacing="{StaticResource Gap}">
 
                 <buttons:ElevatedButton Text="Create Account"
+                            AutomationId="WelcomeCreateAccountButton"
                             ButtonState="Enabled"
                             Command="{Binding CreateAccountCommand}" />
                 <buttons:ElevatedButton Text="Import Account"
+                            AutomationId="WelcomeImportAccountButton"
                             ButtonState="Enabled"
                             Command="{Binding ImportAccountCommand}" />
                 <buttons:BasicGrayButton Text="Browse Properties"
+                             AutomationId="WelcomeBrowsePropertiesButton"
                              ButtonState="Enabled"
                              Command="{Binding BrowsePropertiesCommand}" />
             </VerticalStackLayout>

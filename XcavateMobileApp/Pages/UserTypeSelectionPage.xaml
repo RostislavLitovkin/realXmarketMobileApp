@@ -9,7 +9,8 @@
              xmlns:xcavate="clr-namespace:PlutoFramework.Components.Xcavate;assembly=PlutoFramework"
              xmlns:pages="clr-namespace:XcavateMobileApp.Pages"
              xmlns:page="clr-namespace:PlutoFramework.Templates.PageTemplate;assembly=PlutoFramework"
-             NavigationBarIsVisible="false">
+             NavigationBarIsVisible="false"
+             AutomationId="UserTypeSelectionPage">
     <Grid AbsoluteLayout.LayoutBounds="0.5, 0.5, 1, 1" AbsoluteLayout.LayoutFlags="All"
               Padding="20"
               ColumnSpacing="15"
@@ -55,7 +56,8 @@
 
             <card:ClickableCard Grid.Column="0"
                     Grid.Row="0"
-                    HorizontalOptions="Fill">
+                    HorizontalOptions="Fill"
+                    AutomationId="UserTypeDeveloperCard">
                 <card:ClickableCard.View>
                     <AbsoluteLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
                         AbsoluteLayout.LayoutFlags="All">
@@ -86,7 +88,8 @@
                 </card:ClickableCard.GestureRecognizers>
             </card:ClickableCard>
             <card:ClickableCard Grid.Column="1"
-                    Grid.Row="0">
+                    Grid.Row="0"
+                    AutomationId="UserTypeInvestorCard">
                 <card:ClickableCard.View>
                     <AbsoluteLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
                             AbsoluteLayout.LayoutFlags="All">
@@ -117,7 +120,8 @@
                 </card:ClickableCard.GestureRecognizers>
             </card:ClickableCard>
             <card:ClickableCard Grid.Column="0"
-                    Grid.Row="1">
+                    Grid.Row="1"
+                    AutomationId="UserTypeLettingAgentCard">
                 <card:ClickableCard.View>
                     <AbsoluteLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
                                         AbsoluteLayout.LayoutFlags="All">
@@ -151,7 +155,8 @@
             </card:ClickableCard>
 
             <card:ClickableCard Grid.Column="1"
-                    Grid.Row="1">
+                    Grid.Row="1"
+                    AutomationId="UserTypeLawyerCard">
                 <card:ClickableCard.View>
                     <AbsoluteLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
                 AbsoluteLayout.LayoutFlags="All">

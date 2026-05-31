@@ -6,7 +6,8 @@
                        xmlns:xcavate="clr-namespace:PlutoFramework.Components.Xcavate;assembly=PlutoFramework"
                        xmlns:accounts="clr-namespace:PlutoFramework.Components.Account;assembly=PlutoFramework"
                        x:Class="XcavateMobileApp.Pages.SettingsPage"
-                       Title="Settings">
+                       Title="Settings"
+                       AutomationId="SettingsPage">
     <ScrollView AbsoluteLayout.LayoutBounds="0.5, 0.5, 1, 1"
                 AbsoluteLayout.LayoutFlags="All">
         <VerticalStackLayout HorizontalOptions="Center"
@@ -42,4 +43,3 @@
         <accounts:NoAccountPopup />
     </template:PageTemplate.PopupContent>
 </template:PageTemplate>
-
