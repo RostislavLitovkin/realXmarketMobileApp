@@ -242,6 +242,8 @@ public class AndroidUiTests
         startInfo.ArgumentList.Add("Debug");
         startInfo.ArgumentList.Add("-f");
         startInfo.ArgumentList.Add("net10.0-android");
+        startInfo.ArgumentList.Add("-p:TargetFramework=net10.0-android");
+        startInfo.ArgumentList.Add("-p:TargetFrameworks=net10.0-android");
         startInfo.ArgumentList.Add("-p:AndroidPackageFormat=apk");
 
         using var process = Process.Start(startInfo);
