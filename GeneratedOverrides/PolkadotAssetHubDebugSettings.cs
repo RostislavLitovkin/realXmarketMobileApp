@@ -1,3 +1,4 @@
+using System;
 using Substrate.NetApi.Attributes;
 using Substrate.NetApi.Model.Types.Base;
 using Substrate.NetApi.Model.Types.Metadata.Base;
@@ -14,12 +15,12 @@ public sealed class DebugSettings : BaseType
 
     public override byte[] Encode()
     {
-        return [];
+        return Array.Empty<byte>();
     }
 
     public override void Decode(byte[] byteArray, ref int p)
     {
         TypeSize = 0;
-        Bytes = [];
+        Bytes = Array.Empty<byte>();
     }
 }
