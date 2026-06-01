@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'PlutoFramework' and ! $([MSBuild]::IsOSPlatform('osx'))">
+    <TargetFrameworks>net10.0-android</TargetFrameworks>
+  </PropertyGroup>
+</Project>
